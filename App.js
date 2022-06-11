@@ -1,11 +1,16 @@
 import AppLoading from "expo-app-loading";
 import React, { useState } from "react";
 import * as Font from "expo-font";
-import { Text, Image } from "react-native";
+import { Text, Image, useColorScheme } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Asset, useAssets } from "expo-asset";
-import { NavigationContainer } from "@react-navigation/native";
+import { Asset } from "expo-asset";
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
 import Tabs from "./navigation/Tabs";
+import Stack from "./navigation/Stack";
 
 const loadFonts = (fonts) => fonts.map((font) => Font.loadAsync(font));
 
@@ -41,7 +46,7 @@ export default function App() {
     );
   }
   return <NavigationContainer>
-    <Tabs />
+    <Stack />
   </NavigationContainer>;
 }
 
