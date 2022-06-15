@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, RefreshControl } from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, RefreshControl, Text, View } from "react-native";
 import Swiper from 'react-native-swiper';
 import styled from "styled-components/native";
 import HMedia from "../components/HMedia";
@@ -22,7 +22,7 @@ const ListTitle = styled.Text`
     font-weight: 600;
     margin-left: 30px;
 `;
-const TrendingScroll = styled.ScrollView`
+const TrendingScroll = styled.FlatList`
     margin-top: 20px;
 `;
 const ListContainer = styled.View`
@@ -113,20 +113,22 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             <ListContainer>
                 <ListTitle>Trending Movies</ListTitle>
                 <TrendingScroll
-                    contentContainerStyle={{ paddingLeft: 30 }}
+                    data={trending}
+                    keyExtractor={(item) => item.id + ""}
                     horizontal
+                    contentContainerStyle={{ paddingHorizontal: 20 }}
+                    ItemSeparatorComponent={() => <View style={{ width: 20 }} />}
                     showsHorizontalScrollIndicator={false}
-                >
-                    {trending.map((movie) => (
+                    renderItem={({ item }) => (
                         <VMedia
-                            key={movie.id}
-                            posterPath={movie.poster_path}
-                            originalTitle={movie.original_title}
-                            voteAverage={movie.vote_average}
+                            posterPath={item.poster_path}
+                            originalTitle={item.original_title}
+                            voteAverage={item.vote_average}
                         />
-
-                    ))}
+                    )}
+                >
                 </TrendingScroll>
+
             </ListContainer>
             <ComingSoonTitle>Coming soon</ComingSoonTitle>
             {upcoming.map((movie) => (
