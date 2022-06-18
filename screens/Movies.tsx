@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, RefreshControl, Text, View } from "react-native";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from "react-query";
 import Swiper from 'react-native-swiper';
 import styled from "styled-components/native";
 import HMedia from "../components/HMedia";
@@ -49,20 +49,26 @@ const HSeparator = styled.View`
 `;
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
-    const [refreshing, setRefreshing] = useState(false);
-    const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-        "nowPlaying",
-        moviesApi.nowPlaying
-    );
-    const { isLoading: upcomingLoading, data: upcomingData } = useQuery(
-        "upcoming",
-        moviesApi.upcoming
-    );
-    const { isLoading: trendingLoading, data: trendingData } = useQuery(
-        "trending",
-        moviesApi.trending
-    );
-    const onRefresh = async () => { };
+    const queryClient = useQueryClient();
+    const {
+        isLoading: nowPlayingLoading,
+        data: nowPlayingData,
+        isRefetching: isRefetchingNowPlaying,
+    } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
+    const {
+        isLoading: upcomingLoading,
+        data: upcomingData,
+        isRefetching: isRefetchingUpcoming,
+    } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
+    const {
+        isLoading: trendingLoading,
+        data: trendingData,
+        isRefetching: isRefetchingTrending,
+    } = useQuery(["movies", "trending"], moviesApi.trending);
+
+    const onRefresh = async () => {
+        queryClient.refetchQueries(["movies"]);
+    };
     const renderVMedia = ({ item }) => (
         <VMedia
             posterPath={item.poster_path}
@@ -81,6 +87,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
 
     const movieKeyExtractor = (item) => item.id + "";
     const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+    const refreshing = isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
+    console.log(refreshing);
 
     return loading ? (
         <Loader>
