@@ -1,45 +1,31 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, RefreshControl, Text, View } from "react-native";
-import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Swiper from 'react-native-swiper';
 import styled from "styled-components/native";
 import HMedia from "../components/HMedia";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import { MovieResponse, moviesApi } from './../api';
+import Loader from "../components/Loader";
 
-const queryClient = new QueryClient();
+// const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-
-
-const Container = styled.ScrollView`
-`;
-const Loader = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-`;
 const ListTitle = styled.Text`
     color: white;
     font-size: 18px;
     font-weight: 600;
     margin-left: 30px;
 `;
-const TrendingScroll = styled.FlatList`
-    margin-top: 20px;
-`;
 const ListContainer = styled.View`
     margin-bottom: 40px;
 `;
+
 const ComingSoonTitle = styled(ListTitle)`
     margin-bottom: 30px;
 `;
-
-// const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-
-
 
 const VSeparator = styled.View`
     width: 20px;
