@@ -16,3 +16,5 @@ const nowPlaying = () =>
     fetch(
         `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1&region=KR`
     ).then((res) => res.json());
+
+export const moviesApi = { trending, upcoming, nowPlaying };

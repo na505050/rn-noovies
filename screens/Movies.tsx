@@ -1,12 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, RefreshControl, Text, View } from "react-native";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import Swiper from 'react-native-swiper';
 import styled from "styled-components/native";
 import HMedia from "../components/HMedia";
 import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
+import { moviesApi } from './../api';
 
 const queryClient = new QueryClient();
 
@@ -38,22 +39,8 @@ const ComingSoonTitle = styled(ListTitle)`
 // const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-const renderVMedia = ({ item }) => (
-    <VMedia
-        posterPath={item.poster_path}
-        originalTitle={item.original_title}
-        voteAverage={item.vote_average}
-    />
-);
-const renderHMedia = ({ item }) => (
-    <HMedia
-        posterPath={item.poster_path}
-        originalTitle={item.original_title}
-        overview={item.overview}
-        releaseDate={item.release_date}
-    />
-);
-const movieKeyExtractor = (item) => item.id + "";
+
+
 const VSeparator = styled.View`
     width: 20px;
 `;
@@ -63,7 +50,37 @@ const HSeparator = styled.View`
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     const [refreshing, setRefreshing] = useState(false);
+    const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
+        "nowPlaying",
+        moviesApi.nowPlaying
+    );
+    const { isLoading: upcomingLoading, data: upcomingData } = useQuery(
+        "upcoming",
+        moviesApi.upcoming
+    );
+    const { isLoading: trendingLoading, data: trendingData } = useQuery(
+        "trending",
+        moviesApi.trending
+    );
     const onRefresh = async () => { };
+    const renderVMedia = ({ item }) => (
+        <VMedia
+            posterPath={item.poster_path}
+            originalTitle={item.original_title}
+            voteAverage={item.vote_average}
+        />
+    );
+    const renderHMedia = ({ item }) => (
+        <HMedia
+            posterPath={item.poster_path}
+            originalTitle={item.original_title}
+            overview={item.overview}
+            releaseDate={item.release_date}
+        />
+    );
+
+    const movieKeyExtractor = (item) => item.id + "";
+    const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
 
     return loading ? (
         <Loader>
@@ -84,7 +101,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                         showsButtons={false}
                         containerStyle={{ marginBottom: 30, width: "100%", height: SCREEN_HEIGHT / 4 }}
                     >
-                        {nowPlaying.map((movie) => (
+                        {nowPlayingData.results.map((movie) => (
                             <Slide
                                 key={movie.id}
                                 backdropPath={movie.backdrop_path}
@@ -99,7 +116,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
                     <ListContainer>
                         <ListTitle>Trending Movies</ListTitle>
                         <TrendingScroll
-                            data={trending}
+                            data={trendingData.results}
                             keyExtractor={movieKeyExtractor}
                             horizontal
                             contentContainerStyle={{ paddingHorizontal: 20 }}
@@ -115,7 +132,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
             }
 
 
-            data={upcoming}
+            data={upcomingData.results}
             keyExtractor={movieKeyExtractor}
             ItemSeparatorComponent={HSeparator}
             renderItem={renderHMedia}
