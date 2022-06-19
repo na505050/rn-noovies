@@ -2,6 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Text, View, TouchableOpacity } from "react-native";
 import { BLACK_COLOR, DARK_GREY, LIGHT_GREY, YELLOW_COLOR } from "../colors";
+import Detail from "../screens/Detail";
 
 const ScreenOne = ({ navigation: { navigate } }) => (
     <TouchableOpacity onPress={() => navigate("Two")}>
@@ -24,14 +25,10 @@ const NativeStack = createNativeStackNavigator();
 const Stack = () => (
     <NativeStack.Navigator
         screenOptions={{
-            presentation: "modal",
-            animation: "slide_from_bottom",
-            headerTintColor: YELLOW_COLOR,
+            headerBackTitleVisible: false,
         }}
     >
-        <NativeStack.Screen name="One" component={ScreenOne} />
-        <NativeStack.Screen name="Two" component={ScreenTwo} />
-        <NativeStack.Screen name="Three" component={ScreenThree} />
+        <NativeStack.Screen name="Detail" component={Detail} />
     </NativeStack.Navigator>
 );
 
