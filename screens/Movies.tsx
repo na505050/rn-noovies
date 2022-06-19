@@ -37,27 +37,25 @@ const HSeparator = styled.View`
 
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
     const queryClient = useQueryClient();
+    const [refreshing, setRefreshing] = useState(false);
     const {
         isLoading: nowPlayingLoading,
         data: nowPlayingData,
-        isRefetching: isRefetchingNowPlaying,
     } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
     const {
         isLoading: upcomingLoading,
         data: upcomingData,
-        isRefetching: isRefetchingUpcoming,
     } = useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
     const {
         isLoading: trendingLoading,
         data: trendingData,
-        isRefetching: isRefetchingTrending,
     } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
     const onRefresh = async () => {
-        queryClient.refetchQueries(["movies"]);
+        setRefreshing(true);
+        await queryClient.refetchQueries(["movies"]);
+        setRefreshing(false);
     };
     const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-    const refreshing =
-        isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
 
     // console.log(Object.keys(nowPlayingData?.results[0]));
     // console.log(Object.values(nowPlayingData?.results[0]).map((v) => typeof v));
